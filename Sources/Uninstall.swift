@@ -1,26 +1,15 @@
 import ArgumentParser
 import Foundation
 
-@available(macOS 13.0, *)
 @main
 struct Uninstall: ParsableCommand {
 
-    var scanLocations: [URL] {
+    var scanLocations: [ScanLocation] {
         [
             .applicationDirectory,
             .applicationSupportDirectory,
             .cachesDirectory,
             .libraryDirectory,
-            // "/Applications/",
-            // "~/Library/Application Support",
-            // "/Library/Caches/",
-            // "~/Library/Caches/",
-            // "~/Library/Internet Plug-Ins/",
-            // "~/Library/",
-            // "~/Library/Preferences/",
-            // "~/Library/Application Support/CrashReporter/",
-            // "~/Library/Saved Application State/",
-            // "~/",
         ]
     }
 
@@ -40,32 +29,19 @@ struct Uninstall: ParsableCommand {
 
         let appName = fileManager.displayName(atPath: filePath)
 
-        var wordsToSearch: [String] = [appName]
-        wordsToSearch.append(contentsOf: appName.components(separatedBy: .whitespacesAndNewlines))
-        wordsToSearch.append(appName.trimmingCharacters(in: .whitespacesAndNewlines))
+        let scanner = RelatedFilesScanner(appName: appName)
+        var results: [ScanHit] = []
 
         for location in scanLocations {
-            do {
-                let items = try fileManager.contentsOfDirectory(
-                    at: location, includingPropertiesForKeys: [.nameKey])
-
-                let hits = items.filter { fileUrl in
-                    for word in wordsToSearch {
-                        if fileUrl.path(percentEncoded: false).range(
-                            of: word, options: .caseInsensitive) != nil
-                        {
-                            return true
-                        }
-                    }
-                    return false
-                }
-
-                for hit in hits {
-                    print("Found file at \(hit).")
-                }
-            } catch {
-                print(error.localizedDescription)
+            let result = scanner.searchInDirectory(
+                path: location.directoryURL, depth: location.searchDepth)
+            print("Found \(result.count) related file(s) in \(location.title)")
+            for hit in result {
+                print(
+                    "Search word: \(hit.foundWithKeyWord), location: \(hit.fileUrl.path(percentEncoded: false))"
+                )
             }
+            results.append(contentsOf: result)
         }
     }
 
