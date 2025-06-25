@@ -5,18 +5,18 @@
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder:UninstallerCLI}",
-            "name": "Debug UninstallerCLI",
-            "program": "${workspaceFolder:UninstallerCLI}/.build/debug/UninstallerCLI",
-            "preLaunchTask": "swift: Build Debug UninstallerCLI"
+            "name": "Debug uninstall",
+            "program": "${workspaceFolder:UninstallerCLI}/.build/debug/uninstall",
+            "preLaunchTask": "swift: Build Debug uninstall"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder:UninstallerCLI}",
-            "name": "Release UninstallerCLI",
-            "program": "${workspaceFolder:UninstallerCLI}/.build/release/UninstallerCLI",
-            "preLaunchTask": "swift: Build Release UninstallerCLI"
+            "name": "Release uninstall",
+            "program": "${workspaceFolder:UninstallerCLI}/.build/release/uninstall",
+            "preLaunchTask": "swift: Build Release uninstall"
         }
     ]
 }
